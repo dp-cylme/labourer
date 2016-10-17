@@ -1,0 +1,10 @@
+flags: {}
+extra-package-dbs: []
+packages:
+- '.'
+extra-deps:
+- proto-lens-0.1.0.4
+- proto-lens-protoc-0.1.0.4
+explicit-setup-deps:
+  ! '*': true
+resolver: lts-7.3
