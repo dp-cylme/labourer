@@ -1,0 +1,3 @@
+[submodule "dschemas"]
+	path = dschemas
+	url = https://github.com/dp-cylme/dschemas.git
