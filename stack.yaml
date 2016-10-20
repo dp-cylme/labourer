@@ -2,7 +2,11 @@ flags: {}
 extra-package-dbs: []
 packages:
 - '.'
+- location:
+    git: https://github.com/dp-cylme/logging-effect-google.git
+    commit: 2d0815d4d35e2442d0fab5d01373052f74ece3c3
 extra-deps:
+- logging-effect-1.1.0
 - proto-lens-0.1.0.4
 - proto-lens-protoc-0.1.0.4
 explicit-setup-deps:

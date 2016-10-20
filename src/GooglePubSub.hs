@@ -1,23 +1,36 @@
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DataKinds #-}
 
 module GooglePubSub where
 
+import Data.Text (Text)
 import Control.Retry
        (defaultLogMsg, exponentialBackoff, logRetries, recovering)
-import Data.Text (Text)
-import Network.Google (Error(..), runResourceT, runGoogle, send, Env)
+import Network.Google (Error(..), runResourceT, runGoogle, send)
+import Network.Google.Env (HasEnv)
+import Network.Google.Auth.Scope (HasScope', AllowScopes)
 import Network.Google.PubSub
        (projectsSubscriptionsCreate, subscription, sTopic, sName,
         sPushConfig, pushConfig, pcPushEndpoint)
 import Control.Lens ((&), (.~))
 
 
-registerSubscription :: Env '["https://www.googleapis.com/auth/pubsub"]
-                     -> Text
-                     -> Text
-                     -> Text
-                     -> IO ()
+registerSubscription
+  :: (HasScope'
+        s
+        '["https://www.googleapis.com/auth/cloud-platform",
+          "https://www.googleapis.com/auth/pubsub"]
+      ~
+      'True,
+      AllowScopes s,
+      HasEnv s r) =>
+     r
+     -> Text
+     -> Text
+     -> Text
+     -> IO ()
 registerSubscription env path topicName subscriptionName = do
     _ <-
         recovering
