@@ -56,10 +56,11 @@ executable labourer-exe
                      , optparse-generic >= 1.1
                      , text >= 1.2
                      , wai
-                     , wai-extra
                      , warp
                      , logging-effect >= 1.1
                      , logging-effect-google >= 0.1
+                     , unordered-containers >= 0.2
+                     , wai-logging-effect-google >= 0.1
                      , proto-lens >= 0.1
   default-language:    Haskell2010
 

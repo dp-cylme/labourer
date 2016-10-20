@@ -5,6 +5,9 @@ packages:
 - location:
     git: https://github.com/dp-cylme/logging-effect-google.git
     commit: 2d0815d4d35e2442d0fab5d01373052f74ece3c3
+- location:
+    git: https://github.com/dp-cylme/wai-logging-effect-google.git
+    commit: 83ea8d27aba804de166ef16bbd548ce82c6cfa8b
 extra-deps:
 - logging-effect-1.1.0
 - proto-lens-0.1.0.4
