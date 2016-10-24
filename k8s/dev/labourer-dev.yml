@@ -1,0 +1,29 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: labourer-dev
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: labourer
+      labels:
+        app: labourer
+        env: dev
+    spec:
+      containers:
+        - name: labourer
+          image: gcr.io/ns-pinacta/labourer:latest
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "500Mi"
+              cpu: "100m"
+          ports:
+            - name: labourer
+              containerPort: 3000
+          command: ["labourer", "--env=$(ENV)"]
+          env:
+            - name: ENV
+              value: "debug"
+

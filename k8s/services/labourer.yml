@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: labourer
+spec:
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+    protocol: TCP
+  selector:
+    app: labourer
+
