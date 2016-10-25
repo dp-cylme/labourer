@@ -16,10 +16,10 @@ explicit-setup-deps:
   ! '*': true
 resolver: lts-7.3
 
-docker:
-  enable: true
+#docker:
+#  enable: true
 
-image:
-  container:
-    name: pinacta/labourer
-    base: fpco/stack-run:7.3
+#image:
+#  container:
+#    name: pinacta/labourer
+#    base: fpco/stack-run:7.3
