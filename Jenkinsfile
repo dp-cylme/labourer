@@ -3,6 +3,8 @@ node {
   def appName = 'labourer'
   def feSvcName = "${appName}"
   def imageTag = "gcr.io/${project}/${appName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+  def protocVersion = "3.1.0"
+  def protoc = "protoc-${protocVersion}"
 
   checkout scm
 
@@ -16,6 +18,13 @@ node {
   stage 'Load git submodules'
   sh("git submodule init")
   sh("git submodule update")
+
+  stage 'Install protoc'
+  sh("apt-get install unzip")
+  sh("wget https://github.com/google/protobuf/releases/download/v${protocVersion}/${protoc}-linux-x86_64.zip")
+  sh("unzip ${protoc}-linux-x86_64.zip")
+  sh("mv bin/protoc /usr/bin/")
+
   stage 'Build image'
   sh("stack build")
 
