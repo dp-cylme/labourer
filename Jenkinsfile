@@ -10,6 +10,7 @@ node {
   sh("curl -sSL https://get.haskellstack.org/ | sh")
   sh("stack docker pull")
 
+  sh("stack setup")
   stage 'Build image'
   sh("stack build")
 
