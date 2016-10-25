@@ -10,7 +10,12 @@ node {
   sh("curl -sSL https://get.haskellstack.org/ | sh")
   sh("stack docker pull")
 
+  stage 'Install GHC'
   sh("stack setup")
+
+  stage 'Load git submodules'
+  sh("git submodule init")
+  sh("git submodule update")
   stage 'Build image'
   sh("stack build")
 
