@@ -6,11 +6,12 @@ node {
 
   checkout scm
 
+  sh("curl -sSL https://get.haskellstack.org/ | sh")
   stage 'Build image'
-  sh("stack build")
+  sh("~/.local/bin/stack build")
 
   stage 'Run Go tests'
-  sh("stack test")
+  sh("~/.local/bin/stack test")
 
   stage 'Push image to registry'
   sh("gcloud docker push ${imageTag}")
