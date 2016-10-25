@@ -7,6 +7,8 @@ node {
   checkout scm
 
   sh("curl -sSL https://get.haskellstack.org/ | sh")
+  sh("stack docker pull")
+
   stage 'Build image'
   sh("stack build")
 
