@@ -8,10 +8,10 @@ node {
 
   sh("curl -sSL https://get.haskellstack.org/ | sh")
   stage 'Build image'
-  sh("~/.local/bin/stack build")
+  sh("stack build")
 
   stage 'Run Go tests'
-  sh("~/.local/bin/stack test")
+  sh("stack test")
 
   stage 'Push image to registry'
   sh("gcloud docker push ${imageTag}")
