@@ -6,13 +6,14 @@ node {
 
   checkout scm
 
+  stage 'Install stack'
   sh("curl -sSL https://get.haskellstack.org/ | sh")
   sh("stack docker pull")
 
   stage 'Build image'
   sh("stack build")
 
-  stage 'Run Go tests'
+  stage 'Run tests'
   sh("stack test")
 
   stage 'Push image to registry'
