@@ -1,8 +1,9 @@
 node {
-  def project = 'ns-pinacta'
+  def project = 'pinacta'
+  def projectId = '${project}-147511'
   def appName = 'labourer'
   def feSvcName = "${appName}"
-  def imageTag = "gcr.io/${project}/${appName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+  def imageTag = "gcr.io/${projectId}/${appName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
   def protocVersion = "3.1.0"
   def protoc = "protoc-${protocVersion}"
 
@@ -26,11 +27,17 @@ node {
 
   stage 'Install project global dependencies'
   sh("apt-get install libtinfo-dev")
-  stage 'Build image'
+  stage 'Build project'
   sh("stack build")
 
   stage 'Run tests'
   sh("stack test")
+
+  stage 'Create docker image'
+  sh("stack image container")
+
+  stage 'Create tag of image'
+  sh("docker tag ${project}/${appName} ${imageTag}")
 
   stage 'Push image to registry'
   sh("gcloud docker push ${imageTag}")

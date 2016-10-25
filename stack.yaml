@@ -19,4 +19,4 @@ resolver: lts-7.3
 image:
   container:
     name: pinacta/labourer
-    base: fpco/stack-run:7.3
+    base: fpco/stack-run
