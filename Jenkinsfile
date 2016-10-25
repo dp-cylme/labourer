@@ -10,7 +10,6 @@ node {
 
   stage 'Install stack'
   sh("curl -sSL https://get.haskellstack.org/ | sh")
-  sh("stack docker pull")
 
   stage 'Install GHC'
   sh("stack setup")
@@ -25,6 +24,8 @@ node {
   sh("unzip ${protoc}-linux-x86_64.zip")
   sh("mv bin/protoc /usr/bin/")
 
+  stage 'Install project global dependencies'
+  sh("apt-get install libtinfo-dev")
   stage 'Build image'
   sh("stack build")
 
