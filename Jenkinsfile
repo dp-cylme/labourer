@@ -1,9 +1,9 @@
 node {
   def project = 'pinacta'
-  def projectId = '${project}-147511'
+  def projectId = '147615'
   def appName = 'labourer'
   def feSvcName = "${appName}"
-  def imageTag = "gcr.io/${projectId}/${appName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+  def imageTag = "gcr.io/${project}-${projectId}/${appName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
   def protocVersion = "3.1.0"
   def protoc = "protoc-${protocVersion}"
 
