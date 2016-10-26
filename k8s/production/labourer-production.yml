@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: labourer
-          image: gcr.io/ns-pinacta/labourer:latest
+          image: gcr.io/pinacta-147615/labourer:latest
           imagePullPolicy: Always
           ports:
             - name: labourer
