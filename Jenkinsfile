@@ -14,11 +14,6 @@ node {
   stage 'Install stack'
   sh("curl -sSL https://get.haskellstack.org/ | sh")
 
-  unarchive mapping: ['~/.stack' : '~/.stack']
-
-  stage 'Install GHC'
-  sh("stack setup")
-
   stage 'Load git submodules'
   sh("git submodule init")
   sh("git submodule update")
@@ -31,6 +26,14 @@ node {
 
   stage 'Install project global dependencies'
   sh("apt-get install libtinfo-dev")
+
+  try {
+      unarchive mapping: ['~/.stack' : '~/.stack']
+  } catch(ex) {
+   stage 'Install GHC'
+   sh("stack setup")
+  }
+
   stage 'Build project'
   sh("stack build")
 
