@@ -18,7 +18,9 @@ spec:
           ports:
             - name: labourer
               containerPort: 3000
-          command: ["labourer", "--env=$(ENV)"]
-          env:
-            - name: ENV
-              value: "production"
+          command:
+            - "labourer-exe"
+          args:
+            - "--host=${KUBERNETES_SERVICE_HOST}"
+            - "--topic=logs"
+            - "--subscription=labourer"
