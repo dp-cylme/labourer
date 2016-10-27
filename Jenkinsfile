@@ -1,3 +1,5 @@
+#!/usr/bin/env groovy
+
 node {
   def project = 'pinacta'
   def projectId = '147615'
@@ -11,6 +13,8 @@ node {
 
   stage 'Install stack'
   sh("curl -sSL https://get.haskellstack.org/ | sh")
+
+  unarchive '~/.stack'
 
   stage 'Install GHC'
   sh("stack setup")
@@ -29,6 +33,8 @@ node {
   sh("apt-get install libtinfo-dev")
   stage 'Build project'
   sh("stack build")
+
+  archive '~/.stack'
 
   stage 'Run tests'
   sh("stack test")
