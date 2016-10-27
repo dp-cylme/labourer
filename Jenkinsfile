@@ -14,7 +14,7 @@ node {
   stage 'Install stack'
   sh("curl -sSL https://get.haskellstack.org/ | sh")
 
-  unarchive ['stack', '~/.stack']
+  unarchive mapping: ['~/.stack', '~/.stack']
 
   stage 'Install GHC'
   sh("stack setup")
