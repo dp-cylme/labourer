@@ -28,8 +28,9 @@ node {
   sh("apt-get install libtinfo-dev")
 
   try {
-      unarchive mapping: ['~/.stack' : '~/.stack']
+      unarchive 
   } catch(ex) {
+   println(ex.toString())
    stage 'Install GHC'
    sh("stack setup")
   }
