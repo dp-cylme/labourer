@@ -28,7 +28,7 @@ node {
   sh("apt-get install libtinfo-dev")
 
   try {
-      unarchive 
+      unstash 'stack'
   } catch(ex) {
    println(ex.toString())
    stage 'Install GHC'
@@ -38,7 +38,7 @@ node {
   stage 'Build project'
   sh("stack build")
 
-  archive '~/.stack'
+  stash includes: '~/.stack/**', name: 'stack'
 
   stage 'Run tests'
   sh("stack test")
