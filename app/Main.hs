@@ -13,7 +13,10 @@ import Network.Wai.Handler.Warp (run)
 import GooglePubSub (registerSubscription)
 import Control.Concurrent (forkIO, threadDelay)
 import Network.Google
-       (newEnv, HasEnv(envScopes, envLogger), newLogger, LogLevel(Debug), (!))
+       (newEnv, HasEnv(envScopes, envLogger), newLogger, LogLevel(Debug),
+        (!), newManager, tlsManagerSettings)
+import Network.Google.Compute.Metadata
+       (getProjectId, getInstanceId, getZone)
 import Control.Lens ((<&>), (.~), (&))
 import Network.Google.PubSub (pubSubScope)
 import Network.Google.Logging
@@ -31,10 +34,7 @@ import qualified Data.HashMap.Strict as HashMap
 data Args = Args
     { host :: Text <?> "IP address where Google PubSub will push messages"
     , topic :: Text <?> "Google PubSub topic name from messages we want"
-    , subscription :: Text <?> "subscription name"
-    , projectid :: Text <?> "Project ID, used in log name"
-    , instanceId :: Text <?> "Instance ID"
-    , zone :: Text <?> "zone where instance located"
+    , subscription :: Text <?> "Name of the subscription"
     } deriving (Generic)
 
 instance ParseRecord Args
@@ -49,6 +49,11 @@ main = do
     env <-
         newEnv <&> (envScopes .~ (loggingWriteScope ! pubSubScope)) .
         (envLogger .~ lgr)
+    -- Get projectId, instanceId and zone value from metadata server
+    manager <- newManager tlsManagerSettings
+    (projectid,instanceid,zone) <-
+        ((,,) <$> getProjectId manager <*> getInstanceId manager <*>
+         getZone manager)
     _ <-
         forkIO
             (threadDelay 3000 >>
@@ -63,14 +68,13 @@ main = do
          , flushMaxQueueSize = 128
          })
         env
-        (Just ("projects/" <> (unHelpful (projectid args)) <> "/logs/labourer"))
+        (Just ("projects/" <> projectid <> "/logs/labourer"))
         (Just
              ((monitoredResource & mrLabels .~
                (Just
                     (monitoredResourceLabels
                          (HashMap.fromList
-                              ([ ("instanceId", (unHelpful (instanceId args)))
-                               , ("zone", (unHelpful (zone args)))]))))) &
+                              ([("instanceId", instanceid), ("zone", zone)]))))) &
               mrType .~
               (Just "gce_instance")))
         Nothing $
