@@ -38,13 +38,6 @@ node {
   stage 'Build project'
   sh("stack build")
 
-  sh("ls -la .")
-  sh("ls -la /root")
-  sh("ls -la /root/.stack")
-
-  stage 'stash stack folder'
-  stash includes: '/root/.stack/**', name: 'stack'
-
   stage 'Run tests'
   sh("stack test")
 
