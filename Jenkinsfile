@@ -25,14 +25,10 @@ node {
   sh("stack setup")
 
   stage 'Build project'
-  withEnv(["PATH='bin:$PATH'"]) {
-   sh("stack build")
-  }
+  sh("stack build")
 
   stage 'Run tests'
-  withEnv(["PATH='bin:$PATH'"]){
-   sh("stack test")
-  }
+  sh("stack test")
 
   stage 'Create docker image'
   sh("stack image container")
