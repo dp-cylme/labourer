@@ -11,9 +11,6 @@ node {
 
   checkout scm
 
-  stage 'Install stack'
-  sh("curl -sSL https://get.haskellstack.org/ | sh")
-
   stage 'Load git submodules'
   sh("git submodule init")
   sh("git submodule update")
@@ -26,14 +23,6 @@ node {
 
   stage 'Install project global dependencies'
   sh("apt-get install libtinfo-dev")
-
-  try {
-      unstash 'stack'
-  } catch(ex) {
-   println(ex.toString())
-   stage 'Install GHC'
-   sh("stack setup")
-  }
 
   stage 'Build project'
   sh("stack build")
