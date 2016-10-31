@@ -2,7 +2,7 @@
 
 node {
   def project = 'pinacta'
-  def projectId = '147615'
+  def projectId = '148111'
   def appName = 'labourer'
   def feSvcName = "${appName}"
   def imageTag = "gcr.io/${project}-${projectId}/${appName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
