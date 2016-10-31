@@ -5,7 +5,8 @@ node {
   def projectId = '148111'
   def appName = 'labourer'
   def feSvcName = "${appName}"
-  def imageTag = "gcr.io/${project}-${projectId}/${appName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+  def version = sh(script: "cat *.cabal | grep '^version:' | sed 's/[[:alpha:][:space:]|:]//g'", returnStdout: true)
+  def imageTag = "gcr.io/${project}-${projectId}/${appName}:${version}"
   def protocVersion = "3.1.0"
   def protoc = "protoc-${protocVersion}"
 
@@ -19,13 +20,16 @@ node {
   sh("wget https://github.com/google/protobuf/releases/download/v${protocVersion}/${protoc}-linux-x86_64.zip")
   unzip("${protoc}-linux-x86_64.zip")
 
+  stage 'Install GHC'
+  sh("stack setup")
+
   stage 'Build project'
-  withEnv(["bin"]) {
+  withEnv(["PATH='bin:$PATH'"]) {
    sh("stack build")
   }
 
   stage 'Run tests'
-  withEnv(["bin"]){
+  withEnv(["PATH='bin:$PATH'"]){
    sh("stack test")
   }
 
