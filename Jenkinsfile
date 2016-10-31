@@ -19,7 +19,7 @@ node {
   stage 'Install protoc'
   sh("wget https://github.com/google/protobuf/releases/download/v${protocVersion}/${protoc}-linux-x86_64.zip")
   sh("unzip ${protoc}-linux-x86_64.zip")
-  sh("mv bin/protoc /usr/bin/protoc")
+  sh("sudo mv bin/protoc /usr/bin/protoc")
 
   stage 'Install GHC'
   sh("stack setup")
