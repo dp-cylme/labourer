@@ -16,19 +16,18 @@ node {
   sh("git submodule update")
 
   stage 'Install protoc'
-  sh("apt-get install unzip")
   sh("wget https://github.com/google/protobuf/releases/download/v${protocVersion}/${protoc}-linux-x86_64.zip")
-  sh("unzip ${protoc}-linux-x86_64.zip")
-  sh("mv bin/protoc /usr/bin/")
-
-  stage 'Install project global dependencies'
-  sh("apt-get install libtinfo-dev")
+  unzip("${protoc}-linux-x86_64.zip")
 
   stage 'Build project'
-  sh("stack build")
+  withEnv(["bin"]) {
+   sh("stack build")
+  }
 
   stage 'Run tests'
-  sh("stack test")
+  withEnv(["bin"]){
+   sh("stack test")
+  }
 
   stage 'Create docker image'
   sh("stack image container")
