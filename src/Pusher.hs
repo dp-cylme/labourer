@@ -8,7 +8,6 @@ import Network.Google.Logging.Types
 
 import Data.Scientific (fromFloatDigits)
 import Data.Bifunctor (second)
-import Data.Aeson (Value(..))
 import Data.Bits (shiftR, xor, (.&.))
 import Data.Word (Word32)
 import GHC.Int (Int32, Int64)
@@ -29,6 +28,7 @@ import Network.Google.PubSub (PubsubMessage, pmData)
 import Control.Lens ((^.), (.~), (&), (^?))
 import Control.Monad.Log (Handler)
 
+import qualified Data.Aeson as Aeson
 import qualified Data.Text as Text
 import qualified Data.ByteString.Lazy.Char8 as BSLC8
 import qualified Proto.CommonLogRep as ProtoBuf
@@ -146,24 +146,22 @@ fromTimestampToUTCTime tmstp =
 
 -- | A timestamp in RFC3339 UTC "Zulu" format, accurate to nanoseconds.
 -- Example: "2014-10-02T15:01:23.045123456Z".
-showTimestamp :: ProtoBuf.Timestamp -> Text
+showTimestamp :: ProtoBuf.Timestamp -> UTCTime
 showTimestamp =
-    Text.pack .
-    formatTime defaultTimeLocale "%Y-%m-%dT%H:%M:%S.%Q%Z" .
     fromTimestampToUTCTime
 
-showSeverity :: ProtoBuf.LogSeverity -> Text
+showSeverity :: ProtoBuf.LogSeverity -> LogEntrySeverity
 showSeverity =
     \case
-        ProtoBuf.DEFAULT -> "DEFAULT"
-        ProtoBuf.DEBUG -> "DEBUG"
-        ProtoBuf.INFO -> "INFO"
-        ProtoBuf.NOTICE -> "NOTICE"
-        ProtoBuf.WARNING -> "WARNING"
-        ProtoBuf.ERROR -> "ERROR"
-        ProtoBuf.CRITICAL -> "CRITICAL"
-        ProtoBuf.ALERT -> "ALERT"
-        ProtoBuf.EMERGENCY -> "EMERGENCY"
+        ProtoBuf.DEFAULT -> Default
+        ProtoBuf.DEBUG -> Debug
+        ProtoBuf.INFO -> Info
+        ProtoBuf.NOTICE -> Notice
+        ProtoBuf.WARNING -> Warning
+        ProtoBuf.ERROR -> Error'
+        ProtoBuf.CRITICAL -> Critical
+        ProtoBuf.ALERT -> Alert
+        ProtoBuf.EMERGENCY -> Emergency
 
 
 -- | I took from
@@ -177,24 +175,24 @@ zzDecode32 w =
 fromTextToInt64 :: Text -> Int64
 fromTextToInt64 = read . Text.unpack
 
-fromProtoBufStructValueToAesonValue :: ProtoBuf.Value -> Value
+fromProtoBufStructValueToAesonValue :: ProtoBuf.Value -> Aeson.Value
 fromProtoBufStructValueToAesonValue value =
     case value ^? ProtoBuf.numberValue of
-        Just num -> Number (fromFloatDigits num)
+        Just num -> Aeson.Number (fromFloatDigits num)
         Nothing ->
             case value ^? ProtoBuf.stringValue of
-                Just str -> String str
+                Just str -> Aeson.String str
                 Nothing ->
                     case value ^? ProtoBuf.boolValue of
-                        Just bln -> Bool bln
+                        Just bln -> Aeson.Bool bln
                         Nothing ->
                             case value ^? ProtoBuf.structValue of
                                 Just obj ->
-                                    Object (fromProtoBufStructToJson obj)
+                                    Aeson.Object (fromProtoBufStructToJson obj)
                                 Nothing ->
                                     case value ^? ProtoBuf.listValue of
                                         Just arr ->
-                                            Array
+                                            Aeson.Array
                                                 (Vector.fromList
                                                      (map
                                                           fromProtoBufStructValueToAesonValue
@@ -202,10 +200,10 @@ fromProtoBufStructValueToAesonValue value =
                                                            ProtoBuf.values)))
                                         Nothing ->
                                             case value ^? ProtoBuf.nullValue of
-                                                Just _ -> Null
-                                                Nothing -> Null
+                                                Just _ -> Aeson.Null
+                                                Nothing -> Aeson.Null
 
-fromProtoBufStructToJson :: ProtoBuf.Struct -> HashMap.HashMap Text Value
+fromProtoBufStructToJson :: ProtoBuf.Struct -> HashMap.HashMap Text Aeson.Value
 fromProtoBufStructToJson jsonstruct =
     HashMap.fromList
         (map
