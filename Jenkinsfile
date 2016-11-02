@@ -2,7 +2,7 @@
 
 node {
   def project = 'pinacta'
-  def projectId = '148111'
+  def projectId = '148310'
   def appName = 'labourer'
   def feSvcName = "${appName}"
   def version = sh(script: "cat *.cabal | grep '^version:' | sed 's/[[:alpha:][:space:]|:]//g'", returnStdout: true)
