@@ -13,7 +13,7 @@ node {
   checkout scm
 
   stage 'Preinstall OS packages'
-  sh("apt-get update && apt-get install unzip libtinfo-dev")
+  sh("apt-get update && apt-get -y install unzip libtinfo-dev")
 
   stage 'Load git submodules'
   sh("git submodule init")
