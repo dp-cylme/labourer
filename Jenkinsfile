@@ -12,6 +12,9 @@ node {
 
   checkout scm
 
+  stage 'Preinstall OS packages'
+  sh("apt-get update && apt-get install unzip libtinfo-dev")
+
   stage 'Load git submodules'
   sh("git submodule init")
   sh("git submodule update")
@@ -19,7 +22,7 @@ node {
   stage 'Install protoc'
   sh("wget https://github.com/google/protobuf/releases/download/v${protocVersion}/${protoc}-linux-x86_64.zip")
   sh("unzip ${protoc}-linux-x86_64.zip")
-  sh("sudo mv bin/protoc /usr/bin/protoc")
+  sh("mv bin/protoc /usr/bin/protoc")
 
   stage 'Install GHC'
   sh("stack setup")
